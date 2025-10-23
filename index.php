@@ -2,24 +2,8 @@
 <?php get_header(); ?>
 
 <main>
-    <?php
-    if ( have_posts() ) :
-        while ( have_posts() ) : the_post();
-            ?>
-            <article>
-                <h2><?php the_title(); ?></h2>
-                <div>
-                    <?php the_content(); ?>
-                </div>
-            </article>
-            <?php
-        endwhile;
-    else :
-        ?>
-        <p>Aucun article trouvé.</p>
-        <?php
-    endif;
-    ?>
+ <h1>Bienvenue sur le site de Nathalie Mota</h1>
+ <p>Ceci est la page d'accueil de mon site WordPress personnalisé.</p>
 </main>
 
 <?php get_footer(); ?>
