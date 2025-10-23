@@ -1,0 +1,16 @@
+@use 'variables';
+@use 'mixins';
+@use 'placeholders';
+
+// Utilisation :
+//.bouton-primaire {
+    // Les variables sont préfixées par 'variables'
+//    background-color: variables.$couleur-primaire; 
+    
+    // Les mixins sont préfixés par 'mixins'
+//    @include mixins.shadow-depth(2); 
+//  }
+
+header{
+    
+}
