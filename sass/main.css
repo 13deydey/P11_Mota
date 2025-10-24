@@ -20,10 +20,10 @@ body {
   padding: 0;
 }
 
-.site_main {
+main {
   width: 100%;
-  margin-right: 30px;
-  margin-left: 30px;
+  margin-right: 50px;
+  margin-left: 50px;
   min-height: calc(100vh - 120px);
   background-color: #FFFFFF;
 }

@@ -15,8 +15,8 @@
         </div>
         <nav class="nav_menu">
             <ul>
-                <li><a href="#home">ACCUEIL</a></li>
-                <li><a href="#about">À PROPOS</a></li>
+                <li><a href="<?= home_url(); ?>">ACCUEIL</a></li>
+                <li><a href="<?php get_template_directory_uri() . '/templates/page.php'?>">À PROPOS</a></li>
                 <li><a href="#contact">CONTACT</a></li>
             </ul>
         </nav>
