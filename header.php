@@ -7,7 +7,7 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-    <header>
+    <header class="site_header">
         <div class="nav_logo">
                 <a href=" ">
                     <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/Logo.png" alt="Logo Mota Photo">
