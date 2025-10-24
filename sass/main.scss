@@ -11,8 +11,8 @@
 //    @include mixins.shadow-depth(2); 
 //  }
 
-header{
-    background-color: v.$background-clair;
-    font-family: 'Monospace', monospace;
-
+.nav_menu a{
+    background-color: variables.$background-clair;
+    font-family: 'Poppins', sans-serif;    
+    color: palevioletred;
 };
