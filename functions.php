@@ -9,4 +9,7 @@ function mon_theme_styles() {
     );
 }
 add_action( 'wp_enqueue_scripts', 'mon_theme_styles' );
-?>
+//charge ma feuille CSS de déclaration init et mes polices d'écriture
+
+//je devrais charger aussi ma feuille de style w/ sass 
+?>   

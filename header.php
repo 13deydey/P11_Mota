@@ -8,12 +8,12 @@
 </head>
 <body <?php body_class(); ?>>
     <header>
-        <div class="nav__logo">
+        <div class="nav_logo">
                 <a href=" ">
                     <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/Logo.png" alt="Logo Mota Photo">
                 </a>
         </div>
-        <nav class="nav__menu">
+        <nav class="nav_menu">
             <ul>
                 <li><a href="#home">ACCUEIL</a></li>
                 <li><a href="#about">À PROPOS</a></li>
