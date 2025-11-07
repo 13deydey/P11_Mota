@@ -92,4 +92,8 @@ function mon_theme_setup() {
     ) );
 }
 add_action( 'after_setup_theme', 'mon_theme_setup' );
-?>
+
+add_action( 'acf/init', 'set_acf_settings' );
+function set_acf_settings() {
+    acf_update_setting( 'enable_shortcode', true );
+}
