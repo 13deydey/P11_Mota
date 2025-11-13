@@ -9,11 +9,11 @@ get_header();
 ?>
 
 <div id="primary">
-    <div id="content" role="main">
+    <div id="content" class="hero_header" role="main">
 
         <?php while ( have_posts() ) : the_post(); ?>
 
-            <h1><?php the_field('herotitle'); ?></h1>
+            <h1 class="hero_title"><?php the_field('herotitle'); ?></h1>
 
             <img src="<?php the_field('heroimg'); ?>" />
 
