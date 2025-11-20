@@ -25,32 +25,36 @@ get_header();
      <div class="galerie_filtre">
         <div class="filter_gauche">
             <div class="category_filter">
-                    <div class="selected_category">
-                        <p>Catégories</p>
-                    </div>
-                    <div class="options_category hide">
-                        <div class="option_category_input">Réception</div>
-                        <div class="option_category_input">Télévision</div>
-                        <div class="option_category_input">Concert</div>
-                        <div class="option_category_input">Mariage</div>
-                    </div>
+                <div class="selected_category">
+                    <p>Catégories</p>
+                </div>
+                <div class="options_category hide">
+                    <div class="option_category_input">Réception</div>
+                    <div class="option_category_input">Télévision</div>
+                    <div class="option_category_input">Concert</div>
+                    <div class="option_category_input">Mariage</div>
+                </div>
             </div>
             <div class="format_filter">
-                <label for="format">Formats</label>
-                <select id="format" name="format">
-                    <option value="reception">Portrait</option>
-                    <option value="television">Paysage</option>
-                    <option value="concert">1/1</option>
-                    <option value="mariage">4/4</option>
-                </select>
+                <div class="selected_format">
+                    <p>Formats</p>
+                </div>
+                <div class="options_format hide">
+                    <div class="option_format_input">Portrait</div>
+                    <div class="option_format_input">Paysage</div>
+                    <div class="option_format_input">1/1</div>
+                    <div class="option_format_input">4/4</div>
+                </div>
             </div>
         </div>
-        <div class="trier_filter">
-            <label for="tri">Trier par </label>
-            <select id="tri" name="tri">
-                <option value="recentes">À partir des plus récentes</option>
-                <option value="anciennes">À partir des plus anciennes</option>
-            </select>
+        <div class="date_filter">
+            <div class="selected_date">
+                <p>Trier par</p>
+            </div>
+            <div class="options_date hide">
+                <div class="option_date_input">À partir des plus récentes</div>
+                <div class="option_date_input">À partir des plus anciennes</div>
+            </div>
         </div>
     </div>
 

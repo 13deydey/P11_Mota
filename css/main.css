@@ -272,7 +272,7 @@ main {
 }
 
 /*CSS POUR FILTRES CAT2GORIES*/
-.selected_category {
+.selected_category, .selected_format, .selected_date {
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-size: 12px;
@@ -287,10 +287,10 @@ main {
     margin:0;
   }
 }
-.options_category{
+.options_category, .options_format, .options_date{
   display: none;
 }
-.options_category.active{
+.options_category.active, .options_format.active, .options_date.active{
   display: flex;
   flex-direction: column;
   gap: 10px;
