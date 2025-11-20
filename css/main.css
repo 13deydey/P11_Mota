@@ -15,7 +15,7 @@
 }
 
 body {
-  width: 1440px;
+  width: 100%;
   margin: 0;
   padding: 0;
 }
@@ -140,7 +140,7 @@ main {
   }
 }
 .single_photo_section{
-  width:90%;
+  width:100%;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -156,12 +156,12 @@ main {
   border-bottom: solid 1px #000000;
 
   .cta_button{
-    width: 50%;
+    width: 49%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-    padding-left: 20px;
+    padding-left: 25px;
       p{
           font-size:14px;
           font-weight:300;
@@ -184,18 +184,18 @@ main {
       }
   }
   .preview_next{
-    width: 50%;
+    width: 49%;
     display:flex;
     justify-content:center;
     align-items: flex-end;
     flex-direction: column;
-    padding-right:10px;
+    padding-right:25px;
 
       .preview_image{
         width:81px;
         height:71px;
         object-fit: cover;
-        padding-right:10px;
+        padding-right:5px;
       }
       .arrows_navigation{
         width:71px;
@@ -212,4 +212,98 @@ main {
         object-fit: contain;
       }
   }
+}
+
+.other_photos_section{
+  width: 100%;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 100px;
+  padding-left:100px;
+
+  h3{
+    font-size:18px;
+    font-weight:400;
+    font-family: 'SpaceMono-Regular', monospace;
+    text-transform: uppercase;
+    align-self: self-start;
+    padding-bottom:30px;
+  }
+}
+.other_photos_container{
+  width: 100%;
+  display:flex;
+  justify-content: initial;
+  align-items: center;
+  gap:15px;
+}
+.other_photo_item{
+  img{
+    width: 564px;
+  height: 495px;
+  }
+  object-fit: cover;
+}
+
+
+
+/*CSS POUR SECTIONS GALERIE FILTRES*/
+.galerie_section{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 150px;
+  margin-left: 150px;
+  margin-top: 50px;
+  margin-bottom: 100px;
+}
+.galerie_filtre{
+  width: 100%;
+  
+  display:flex;
+  justify-content: space-between
+}
+.filter_gauche{
+  display: flex;
+}
+
+/*CSS POUR FILTRES CAT2GORIES*/
+.selected_category {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  color: #000000;
+  border: solid 1px #000000;
+  padding: 8px 16px;
+  margin-right: 10px;
+  cursor: pointer;
+  p{
+    text-transform: uppercase;
+    padding:0;
+    margin:0;
+  }
+}
+.options_category{
+  display: none;
+}
+.options_category.active{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  border: solid 1px #000000;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.hide{
+  display: none !important;
+}
+.visible{
+  display: flex !important;
 }

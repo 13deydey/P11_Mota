@@ -1,3 +1,5 @@
+<script src="<?php echo get_template_directory_uri(); ?>/js/script.js"></script>
+<!-- intègre le script JS -->
 </body>
 <footer>
     <div class="footer_content">

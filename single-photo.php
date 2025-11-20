@@ -14,14 +14,14 @@ get_header();
             <div class="photo_informations">
                 <h2><?php the_field('titre'); ?></h2>
                 <p>RÉFÉRENCE : <?php the_field('reference'); ?></p>
-                <p>CATÉGORIE : <?php the_field('categorie'); ?></p>
+                <p>CATÉGORIE : <?php the_field('categories'); ?></p>
                 <p>FORMAT : <?php the_field('format'); ?></p>
                 <p>TYPE : <?php the_field('type'); ?></p>
                 <p>ANNÉE : <?php the_field('date'); ?></p>
             </div>
             <div class="photo_showcase">
             <img src="<?php the_field('singlephoto'); ?>" 
-                    alt="<?php //récupérer le titre ou la description de la photo ?>">
+                    alt="<?php the_field('titre'); ?>">
             </div>
         <?php endwhile; // end of the loop. ?>
     </div>
@@ -46,4 +46,15 @@ get_header();
     <p><?php the_content(); ?></p>
 </section>
 
+<section class="other_photos_section">
+    <h3>Vous aimerez aussi </h2>
+    <div class="other_photos_container">
+        <a href="<?php //lien vers la photo 1 ?>" class="other_photo_item">
+            <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/nathalie-1.jpeg" alt="Photo 1">
+        </a>
+        <a href="<?php //lien vers la photo 2 ?>" class="other_photo_item">
+            <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/images/nathalie-2.jpeg" alt="Photo 2">
+        </a>
+    </div>
+</section>
 <?php get_footer(); ?>
