@@ -113,8 +113,9 @@ main {
       img{
         width:563px;
         height:844px;
+        object-fit: cover;
       }
-      object-fit: cover;
+      
   }
   .photo_informations{
       text-align:left;
@@ -306,4 +307,53 @@ main {
 }
 .visible{
   display: flex !important;
+}
+
+.galerie_photos{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 50px;
+
+  article{
+    width:564px;
+    margin:5px;
+    height: 495px;
+    position: relative; /* Pour que le positionnement absolu soit relatif à ce conteneur */
+    display: inline-block;
+
+    img{
+      width:564px;
+      height: 495px;
+      object-fit: cover;
+    }
+  }
+  
+}
+
+/*CSS POUR INFO PHOTO AU SURVOL*/
+
+.info_overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 10px;
+  overflow: auto;  /* Si contenu dépasse */
+  pointer-events: none; /* Pour que le survol ne soit pas bloqué */
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 14px;  
+  color: #FFFFFF;
+  text-transform: uppercase;
+}
+/*.gallery-item:hover*/
+ .info_overlay.visible {
+  opacity: 1;
+  pointer-events: auto; /* Active interaction si nécessaire */
 }

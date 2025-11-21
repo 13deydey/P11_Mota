@@ -63,3 +63,54 @@ selected_date.addEventListener('click', () => {
         });
     });
 });
+
+//GALERIE ACCUEIL DES PHOTOS _ CPT UI 
+//JS POUR RÉCUPÉRER LES POSTS D'UN CUSTOM POST TYPE VIA L'API REST DE WORDPRESS
+fetch('/wp-json/wp/v2/photo?_embed')
+  .then(response => response.json())
+  .then(data => {
+    const gallery = document.querySelector('#gallery');
+
+    data.forEach(post => {
+      // Créer un article avec l'image
+      const article = document.createElement('article');
+      article.classList.add('gallery-item');
+
+      article.innerHTML = `
+        <a href="${post.link}">
+          <img src="${post.acf && post.acf.singlephoto ? post.acf.singlephoto : ''}" alt="${post.title.rendered}"/>
+        </a>
+      `;
+
+      // Créer la div info_overlay, vide et cachée initialement
+      const info = document.createElement('div');
+      info.classList.add('info_overlay');  // Créez la classe en CSS avec opacité 0 par défaut
+      info.innerHTML = `
+        <p>RÉFÉRENCE : ${post.acf?.reference || ''}</p>
+        <p>CATÉGORIE : ${post.acf?.categories || ''}</p>
+        <p>FORMAT : ${post.acf?.format || ''}</p>
+        <p>TYPE : ${post.acf?.type || ''}</p>
+        <p>ANNÉE : ${post.acf?.date || ''}</p>
+      `;
+
+      article.appendChild(info);
+
+      gallery.appendChild(article);
+    });
+
+    // Maintenant que tous les éléments sont dans le DOM, ajoutez les écouteurs
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+      const infoOverlay = item.querySelector('.info_overlay');
+
+      item.addEventListener('mouseenter', () => {
+        infoOverlay.classList.add('visible');
+        console.log('Survol détecté');
+      });
+
+      item.addEventListener('mouseleave', () => {
+        infoOverlay.classList.remove('visible');
+      });
+    });
+  })
+  .catch(error => console.error(error));

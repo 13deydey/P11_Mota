@@ -77,10 +77,8 @@ function mon_theme_enqueue_scripts() {
     ));
 }
 add_action('wp_enqueue_scripts', 'mon_theme_enqueue_scripts');
-?>
 
-
-<?php
+//LOGO UPLOAD VIA WP CUSTOMIZER
 //ajoute le support du logo personnalisé
 function mon_theme_setup() {
     add_theme_support( 'custom-logo', array(
@@ -97,3 +95,58 @@ add_action( 'acf/init', 'set_acf_settings' );
 function set_acf_settings() {
     acf_update_setting( 'enable_shortcode', true );
 }
+
+//CPT PHOTO 
+function cptui_register_my_cpts() {
+
+	/**
+	 * Post Type: photos.
+	 */
+
+	$labels = [
+		"name" => esc_html__( "photos", "motaTheme" ),
+		"singular_name" => esc_html__( "photo", "motaTheme" ),
+		"menu_name" => esc_html__( "Photos", "motaTheme" ),
+	];
+
+	$args = [
+		"label" => esc_html__( "photos", "motaTheme" ),
+		"labels" => $labels,
+		"description" => "",
+		"public" => true,
+		"publicly_queryable" => true,
+		"show_ui" => true,
+		"show_in_rest" => true,
+		"rest_base" => "",
+		"rest_controller_class" => "WP_REST_Posts_Controller",
+		"rest_namespace" => "wp/v2",
+		"has_archive" => false,
+		"show_in_menu" => true,
+		"show_in_nav_menus" => true,
+		"delete_with_user" => false,
+		"exclude_from_search" => false,
+		"capability_type" => "post",
+		"map_meta_cap" => true,
+		"hierarchical" => false,
+		"can_export" => false,
+		"rewrite" => [ "slug" => "photo", "with_front" => true ],
+		"query_var" => true,
+		"supports" => [ "title", "editor", "thumbnail" ],
+		"show_in_graphql" => false,
+	];
+
+	register_post_type( "photo", $args );
+}
+
+add_action( 'init', 'cptui_register_my_cpts' );
+
+// Expose ACF fields in REST API
+function expose_acf_fields_in_rest() {
+    register_rest_field('photo', 'acf', array(
+        'get_callback' => function($post) {
+            return get_fields($post['id']);
+        },
+        'schema' => null,
+    ));
+}
+add_action('rest_api_init', 'expose_acf_fields_in_rest');

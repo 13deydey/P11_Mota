@@ -58,26 +58,9 @@ get_header();
         </div>
     </div>
 
-    <article class="galerie_photos">
-        <?php while ( have_posts() ) : the_post(); ?>
-            <div class="photo_item">
-                <img src="<?php the_field('singlephoto'); ?>" 
-                    alt="<?php the_field('titre'); ?>">
-                <p>RÉFÉRENCE : <?php the_field('reference'); ?></p>
-                <p>CATÉGORIE : <?php the_field('categories'); ?></p>
-            </div>
-
-    <!-- besoin d'intégrer le format récuperer sous forme d'élément HTML pour l'utiliser dans les filtres, same pour date ? -->       
-                <!-- <div class="photo_INFOS_PHANTOM" style="display:none;">
-                    <?php //the_field('format'); ?>
-                <p>FORMAT : <?php //the_field('format'); ?></p>
-                <p>TYPE : <?php //the_field('type'); ?></p>
-                <p>ANNÉE : <?php //the_field('date'); ?></p>
-                </div>
-                -->     
-            
-        <?php endwhile; // end of the loop. ?>
-    </article>
+    <div class="galerie_photos" id="gallery">
+      
+    </div>
 </section>
 
 <?php get_footer(); ?>
