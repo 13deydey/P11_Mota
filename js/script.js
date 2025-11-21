@@ -66,51 +66,111 @@ selected_date.addEventListener('click', () => {
 
 //GALERIE ACCUEIL DES PHOTOS _ CPT UI 
 //JS POUR RÉCUPÉRER LES POSTS D'UN CUSTOM POST TYPE VIA L'API REST DE WORDPRESS
-fetch('/wp-json/wp/v2/photo?_embed')
+
+  fetch('/wp-json/wp/v2/photo?_embed')
   .then(response => response.json())
   .then(data => {
     const gallery = document.querySelector('#gallery');
 
     data.forEach(post => {
-      // Créer un article avec l'image
       const article = document.createElement('article');
       article.classList.add('gallery-item');
-
       article.innerHTML = `
         <a href="${post.link}">
-          <img src="${post.acf && post.acf.singlephoto ? post.acf.singlephoto : ''}" alt="${post.title.rendered}"/>
+          <img src="${post.acf?.singlephoto || ''}" alt="${post.title.rendered}" />
         </a>
       `;
 
-      // Créer la div info_overlay, vide et cachée initialement
       const info = document.createElement('div');
-      info.classList.add('info_overlay');  // Créez la classe en CSS avec opacité 0 par défaut
+      info.classList.add('info_overlay');
       info.innerHTML = `
-        <p>RÉFÉRENCE : ${post.acf?.reference || ''}</p>
-        <p>CATÉGORIE : ${post.acf?.categories || ''}</p>
-        <p>FORMAT : ${post.acf?.format || ''}</p>
-        <p>TYPE : ${post.acf?.type || ''}</p>
-        <p>ANNÉE : ${post.acf?.date || ''}</p>
+        <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_fullscreen.png" alt="Aperçu lightbox" class="apercu"/>
+        <a href="${post.link}">
+            <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_eye.png" alt="Plein écran" class="pleinEcran"/>
+        </a>
+        <div class="infos-content">
+            <p>${post.acf?.titre || ''}</p>
+            <p>${post.acf?.categories || ''}</p>
+        </div>
       `;
 
       article.appendChild(info);
-
       gallery.appendChild(article);
+
+      // Stocker les données utiles en dataset pour accès simple
+      article.dataset.singlephoto = post.acf?.singlephoto || '';
+      article.dataset.reference = post.acf?.reference || '';
+      article.dataset.categories = post.acf?.categories || '';
     });
 
-    // Maintenant que tous les éléments sont dans le DOM, ajoutez les écouteurs
     const galleryItems = document.querySelectorAll('.gallery-item');
     galleryItems.forEach(item => {
       const infoOverlay = item.querySelector('.info_overlay');
 
       item.addEventListener('mouseenter', () => {
         infoOverlay.classList.add('visible');
-        console.log('Survol détecté');
       });
-
       item.addEventListener('mouseleave', () => {
         infoOverlay.classList.remove('visible');
+      });
+
+      const apercu = item.querySelector('.apercu');
+      apercu.addEventListener('click', () => {
+        infoOverlay.classList.remove('visible');
+
+        // Création de l'overlay
+        const overlay = document.createElement('div');
+        overlay.classList.add('lightbox-overlay');
+        
+        // Créer la lightbox dynamiquement au clic
+        const lightbox_content = document.createElement('div');
+        lightbox_content.classList.add('lightbox');
+
+        lightbox_content.innerHTML = `
+            <article class="fleche_prec">
+                <i class="fa-solid fa-arrow-left-long"></i>
+                <p>Précédente</p>
+            </article>
+            <article class="previsualisation">
+                <img src="${item.dataset.singlephoto}" alt="Photo" />
+                <div class="light_rang2">
+                    <p>${item.dataset.reference}</p>
+                    <p>${item.dataset.categories}</p>
+                </div>
+            </article>
+            <article class="fleche_suiv">
+                <p>Suivante</p>
+                <i class="fa-solid fa-arrow-right-long"></i>
+            </article>
+        `;
+
+        // Ajouter au body
+        document.body.appendChild(overlay);
+        document.body.appendChild(lightbox_content);
+
+        // Ajouter classe pour bloquer scroll sur body
+        document.body.classList.add('no-scroll');
+
+         // Fermer lightbox au clic sur l'overlay
+         overlay.addEventListener('click', () => {
+            lightbox_content.remove();
+            overlay.remove();
+            document.body.classList.remove('no-scroll');
+            });
       });
     });
   })
   .catch(error => console.error(error));
+
+
+
+  /*
+a partir du fetch qui récupère toutes les imgs , récupérer les catégories
+faire en sorte qu'il n'y ait pas de doublon sur les catégories
+récupérer le code html pour les cat. depuis home.php
+utiliser ce code pour pouvoir injecter les cat. en live avec js l.31 à 36, récup 1 option et boucler CF.L32
+Attention récupérer toutes les cat. avec AJAX
+
+
+
+  */

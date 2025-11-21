@@ -29,10 +29,7 @@ get_header();
                     <p>Catégories</p>
                 </div>
                 <div class="options_category hide">
-                    <div class="option_category_input">Réception</div>
-                    <div class="option_category_input">Télévision</div>
-                    <div class="option_category_input">Concert</div>
-                    <div class="option_category_input">Mariage</div>
+                    <div data-category="A REMPLACER PAR UN DES CHOIX DE LA CATÉGORIE" class="option_category_input">A REMPLACER PAR LE NOM DU CHOIX</div>
                 </div>
             </div>
             <div class="format_filter">
@@ -59,7 +56,7 @@ get_header();
     </div>
 
     <div class="galerie_photos" id="gallery">
-      
+        <!-- compléter avec script.js pour la galerie d'éléments photo de CPT UI-->
     </div>
 </section>
 

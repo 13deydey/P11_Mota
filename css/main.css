@@ -353,7 +353,94 @@ main {
   text-transform: uppercase;
 }
 /*.gallery-item:hover*/
- .info_overlay.visible {
+.visible {
   opacity: 1;
   pointer-events: auto; /* Active interaction si nécessaire */
+}
+.info_overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .apercu{
+    width:34px;
+    height: 34px;
+    align-self: flex-end;
+  }
+  a{
+    align-self: center;
+  }
+  .pleinEcran{
+    width: 46px;
+    height: 32px;
+  }
+  .infos-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+
+.lightbox {
+  position: fixed;       /* Fixe la lightbox par rapport à la fenêtre */
+  top: 50%;             /* Centre verticalement */
+  left: 50%;            /* Centre horizontalement */
+  transform: translate(-50%, -50%); /* Décale pour centrage exact */
+  background:  rgba(0,0,0,0.0);   /* Fond blanc de la lightbox */
+  padding: 20px;
+  z-index: 1001;        /* Au-dessus du fond */
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;       /* Scroll interne si contenu trop grand */
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 14px;  
+  color: #FFFFFF;
+  text-transform: uppercase;
+  width: 70%;
+  height: 90%;
+
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+    img{
+      width: 565px;
+      height: 460px;
+      object-fit: cover;
+    }
+  .light_rang2{
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 14px;  
+  color: #FFFFFF;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  }
+  .fleche_prec, .fleche_suiv{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: space-around;
+    align-items: center;
+    i{
+      width:30px;
+    }
+  }
+}
+
+/* Fond sombre couvrant tout l’écran */
+.lightbox-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.8); /* noir transparent */
+  z-index: 1000;           /* Sous la lightbox */
+}
+
+/* Empêcher le scroll du body lors de l’ouverture */
+body.no-scroll {
+  overflow: hidden;
 }
