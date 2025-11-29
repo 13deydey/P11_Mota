@@ -101,9 +101,10 @@ selected_date.addEventListener('click', () => {
       article.dataset.singlephoto = post.acf?.singlephoto || '';
       article.dataset.reference = post.acf?.reference || '';
       article.dataset.categories = post.acf?.categories || '';
+      article.dataset.link = post.link;
     });
 
-    const galleryItems = document.querySelectorAll('.gallery-item');
+    const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
     galleryItems.forEach(item => {
       const infoOverlay = item.querySelector('.info_overlay');
 
@@ -116,49 +117,79 @@ selected_date.addEventListener('click', () => {
 
       const apercu = item.querySelector('.apercu');
       apercu.addEventListener('click', () => {
-        infoOverlay.classList.remove('visible');
+        openLightbox(galleryItems.indexOf(item));
 
-        // Création de l'overlay
-        const overlay = document.createElement('div');
-        overlay.classList.add('lightbox-overlay');
-        
-        // Créer la lightbox dynamiquement au clic
-        const lightbox_content = document.createElement('div');
-        lightbox_content.classList.add('lightbox');
-
-        lightbox_content.innerHTML = `
-            <article class="fleche_prec">
-                <i class="fa-solid fa-arrow-left-long"></i>
-                <p>Précédente</p>
-            </article>
-            <article class="previsualisation">
-                <img src="${item.dataset.singlephoto}" alt="Photo" />
-                <div class="light_rang2">
-                    <p>${item.dataset.reference}</p>
-                    <p>${item.dataset.categories}</p>
-                </div>
-            </article>
-            <article class="fleche_suiv">
-                <p>Suivante</p>
-                <i class="fa-solid fa-arrow-right-long"></i>
-            </article>
-        `;
-
-        // Ajouter au body
-        document.body.appendChild(overlay);
-        document.body.appendChild(lightbox_content);
-
-        // Ajouter classe pour bloquer scroll sur body
-        document.body.classList.add('no-scroll');
-
-         // Fermer lightbox au clic sur l'overlay
-         overlay.addEventListener('click', () => {
-            lightbox_content.remove();
-            overlay.remove();
-            document.body.classList.remove('no-scroll');
-            });
       });
     });
+
+    let currentIndex = 0;
+
+    function openLightbox(index) {
+    currentIndex = index;
+
+    const item = galleryItems[currentIndex];
+
+    // Mettre à jour la lightbox (overlay et contenu)
+    const overlay = document.createElement('div');
+    overlay.classList.add('lightbox-overlay');
+    document.body.appendChild(overlay);
+
+    let lightbox_content = document.querySelector('.lightbox');
+    if (!lightbox_content) {
+        lightbox_content = document.createElement('div');
+        lightbox_content.classList.add('lightbox');
+        document.body.appendChild(lightbox_content);
+    }
+
+    lightbox_content.innerHTML = `
+        <article class="fleche_prec">
+            <i class="fa-solid fa-arrow-left-long"></i>
+            <p>Précédente</p>
+        </article>
+        <article class="previsualisation">
+            <a href="${item.dataset.link}">
+                <img src="${item.dataset.singlephoto}" alt="Photo sélectionnée" />
+            </a>
+            <div class="light_rang2">
+                <p>${item.dataset.reference}</p>
+                <p>${item.dataset.categories}</p>
+            </div>
+        </article>
+        <article class="fleche_suiv">
+            <p>Suivante</p>
+            <i class="fa-solid fa-arrow-right-long"></i>
+        </article>
+    `;
+
+    // Bloquer scroll
+    document.body.classList.add('no-scroll');
+
+    // Écouteur fermeture overlay
+    overlay.addEventListener('click', () => {
+        lightbox_content.remove();
+        overlay.remove();
+        document.body.classList.remove('no-scroll');
+    });
+
+    // Navigation précédente
+    const precedente = lightbox_content.querySelector('.fleche_prec');
+    precedente.addEventListener('click', () => {
+        // moyen de boucler en récupérant le modulo de la longueur du tableau CAD le reste de la division
+        // si photo n°6, donc élément n°5 pour une longueur de 6, (5-1+6)%6 = 4 donc on revient à l'élément d'avant
+        // car 10%6 => 10/6 = 1 reste 4 donc on récupère le 4
+        currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+        openLightbox(currentIndex);
+    });
+
+    // Navigation suivante
+    const suivante = lightbox_content.querySelector('.fleche_suiv');
+    suivante.addEventListener('click', () => {
+        // moyen de boucler en récupérant le modulo de la longueur du tableau CAD le reste de la division
+        //si photo 5, élément n°4 pour une longueur de 5, (4+1)%5 = 0 donc on revient au début
+        currentIndex = (currentIndex + 1) % galleryItems.length;
+        openLightbox(currentIndex);
+    });
+    }
   })
   .catch(error => console.error(error));
 
@@ -170,7 +201,38 @@ faire en sorte qu'il n'y ait pas de doublon sur les catégories
 récupérer le code html pour les cat. depuis home.php
 utiliser ce code pour pouvoir injecter les cat. en live avec js l.31 à 36, récup 1 option et boucler CF.L32
 Attention récupérer toutes les cat. avec AJAX
-
-
-
   */
+fetch('/wp-json/wp/v2/photo?_embed')
+.then(response => response.json())
+.then(data => {
+//TEST AVEC COPILOT POUR RÉCUPÉRER LES CATÉGORIES UNIQUES ????? HOW DOES IT WORK ????
+    const selected_category = document.querySelector('.selected_category p');
+    selected_category.textContent = 'Catégories';
+    const optionsCategoryContainer = document.querySelector('.options_category');
+    const categoriesSet = new Set();
+
+    // Récupérer les catégories uniques
+    data.forEach(post => {
+        if (post.acf?.categories) {
+            categoriesSet.add(post.acf.categories);
+        }
+    });
+
+    // Créer et injecter les options de catégorie
+    categoriesSet.forEach(category => {
+        const optionDiv = document.createElement('div');
+        optionDiv.classList.add('option_category_input');
+        optionDiv.setAttribute('data-value', category);
+        optionDiv.textContent = category;
+        optionsCategoryContainer.appendChild(optionDiv);
+    });
+
+    //TRY TO CHECK COMPANION HELP AND EXPLANATION BUT DOESN'T WORK AS EXPECTED
+    //const categories = post.acf?.categories;
+    //BECAUSE POST ISN'T DEFINED IN THIS SCOPE, WE NEED TO COLLECT CATEGORIES FROM ALL POSTS
+    //POST IS DEFINED IN LINE 184 IN THE FOREACH LOOP
+    //const categorieSet = new Set(categories);
+    //console.log(categorieSet); // Set(3) {"portrait", "nature", "studio"}
+    //console.log(categories);
+})
+.catch(error => console.error(error));

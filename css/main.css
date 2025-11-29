@@ -302,12 +302,16 @@ main {
   padding: 8px 16px;
   cursor: pointer;
 }
+
+
 .hide{
   display: none !important;
 }
 .visible{
   display: flex !important;
 }
+
+/*CSS POUR GALERIE PHOTOS*/
 
 .galerie_photos{
   width: 100%;

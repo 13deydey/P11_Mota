@@ -132,3 +132,45 @@ fetch('/wp-json/wp/v2/photo?_embed')
 
   })
   .catch(error => console.error(error));
+
+
+
+
+        // Création de l'overlay
+        const overlay = document.createElement('div');
+        overlay.classList.add('lightbox-overlay');
+
+        // Création de la lightbox
+        const lightbox = document.createElement('div');
+        lightbox.classList.add('lightbox');
+        lightbox.innerHTML = `
+        <div class="light_rang1">
+            <article class="fleche_prec">
+              <img src="path/to/fleche_prec.png" alt="Précédente"/>
+              <p>Précédente</p>
+            </article>
+            <img src="${item.dataset.singlephoto}" alt="Photo" />
+            <article class="fleche_suiv">
+              <p>Suivante</p>
+              <img src="path/to/fleche_suiv.png" alt="Suivante" />
+            </article>
+          </div>
+          <div class="light_rang2">
+            <p>${item.dataset.reference}</p>
+            <p>${item.dataset.categories}</p>
+          </div>
+        `;
+
+        // Ajout de l'overlay et lightbox au body
+        document.body.appendChild(overlay);
+        document.body.appendChild(lightbox);
+
+        // Ajouter classe pour bloquer scroll sur body
+        document.body.classList.add('no-scroll');
+
+        // Fermer lightbox au clic sur l'overlay
+        overlay.addEventListener('click', () => {
+        lightbox.remove();
+        overlay.remove();
+        document.body.classList.remove('no-scroll');
+        });
