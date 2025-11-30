@@ -35,15 +35,14 @@ get_header();
             </span>
         </div>
         <div class="preview_next">
-            <img src="<?php  the_field('singlephoto')?>" alt="Aperçu de la photo suivante" class="preview_image">
+        <?php 
+            // Récupérer la référence actuelle du CPT pour la navigation avec les flèches via JS et AJAX
+            $current_photo_url = get_field('singlephoto'); 
+        ?>
+            <img src="" alt="Aperçu de la photo suivante" class="preview_image">
             <div class="arrows_navigation">
-                <a href="<?php //fleche preview ?>" class="preview_arrow">               
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/left_arrow.svg" alt="Précédente">                         
-                </a>
-                <a href="<?php //fleche next ?>" class="next_arrow">
-                    <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/right_arrow.svg" alt="Suivante">      
-
-                </a>
+                <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/left_arrow.svg" alt="Précédente" class="preview_arrow">                         
+                <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/right_arrow.svg" alt="Suivante" class="next_arrow">      
             </div> 
         </div>
     </div>

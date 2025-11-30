@@ -4,6 +4,7 @@
   font-weight: 400;
   font-size: 16px;
   color: #000000;
+  text-transform: uppercase;
 }
 
 .nav_menu ul, .footer_menu ul {
