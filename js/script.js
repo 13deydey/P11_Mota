@@ -197,14 +197,12 @@ if (contactButton) contactButton.addEventListener('click', function(event) {
 });
 // Gestion du lien "Contact" dans le menu WordPress
 const menuContact = document.querySelector('#menu-item-87 a');
-if (menuContact) {
-    menuContact.addEventListener('click', function(event) {
-        //Stoppe la navigation vers la page de contact
-        event.preventDefault(); 
-        //lance l'ouverture de la modale sans référence de photo comme paramètre
-        openModale();
-    });
-}
+menuContact.addEventListener('click', function(event) {
+    //Stoppe la navigation vers la page de contact
+    event.preventDefault(); 
+    //lance l'ouverture de la modale sans référence de photo comme paramètre
+    openModale();
+});
 
 //RÉPÉTER LE TITRE "CONTACT" DANS LA MODALE
 const titreModale = modaleContact.querySelector('.titre');
