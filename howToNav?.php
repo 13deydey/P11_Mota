@@ -43,134 +43,69 @@ old nav                 <a href=" ">
                 </a>
 
 
+//JAVASCRIPT POUR LE BOUTON DE FILTRE DE "CATÉGORIE" DANS LA GALERIE D'ACCUEIL
+const category_filter = document.querySelector('.category_filter');
+//const selected_category = category_filter.querySelector('.selected_category');
+const options_category = category_filter.querySelector('.options_category');
+const category_input = category_filter.querySelectorAll('.option_category_input');
+const pCategory = selected_category.querySelector('p');
 
-                //GALERIE ACCUEIL DES PHOTOS _ CPT UI 
-//JS POUR RÉCUPÉRER LES POSTS D'UN CUSTOM POST TYPE VIA L'API REST DE WORDPRESS
-fetch('/wp-json/wp/v2/photo?_embed')
-  .then(response => response.json())
-  .then(data => {
-    const gallery = document.querySelector('#gallery');
+//Au clic sur la div selected_category, on affiche/masque les options de catégorie
+selected_category.addEventListener('click', () => {
+    options_category.classList.toggle('active');
+    options_category.classList.toggle('hide');
 
-    data.forEach(post => {
-      // Créer un article avec l'image
-      const article = document.createElement('article');
-      article.classList.add('gallery-item');
-      article.innerHTML = `
-        <a href="${post.link}">
-          <img src="${post.acf && post.acf.singlephoto ? post.acf.singlephoto : ''}" alt="${post.title.rendered}"/>
-        </a>
-      `;
-
-      // Créer la div info_overlay, vide et cachée initialement
-      const info = document.createElement('div');
-      info.classList.add('info_overlay');  // Créez la classe en CSS avec opacité 0 par défaut
-      info.innerHTML = `
-        <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_fullscreen.png" alt="Aperçu lightbox" class="apercu"/>
-        <a href="${post.link}">
-            <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_eye.png" alt="Plein écran" class="pleinEcran"/>
-        </a>
-        <div class="infos-content">
-            <p> ${post.acf?.titre || ''}</p>
-            <p>${post.acf?.categories || ''}</p>
-        </div>
-      `;
-
-      const lightbox = document.createElement('div');
-      lightbox.classList.add('lightbox');
-      lightbox.innerHTML =`
-          <div class="light_rang1">
-              <article class="fleche_prec">
-                  <img src="fleche"/>
-                  <p>Précédente</p>
-              </article>
-              <img src="${post.acf && post.acf.singlephoto ? post.acf.singlephoto : ''}"/>
-              <article class="fleche_suiv">
-                  <p>Suivante</p>
-                  <img src="fleche"/>
-              </article>
-          </div>
-          <div class="light_rang2">
-              <p>${post.acf?.reference || ''}</p>
-              <p>${post.acf?.categories || ''}</p>
-          </div>
-        `;
-
-      article.appendChild(info);
-
-      gallery.appendChild(article);
-
-      //élément à intégrer ultérieurement ou simplement à récupérer pour les filtres
-      //<p>TYPE : ${post.acf?.type || ''}</p>
-      //<p>ANNÉE : ${post.acf?.date || ''}</p>
-      //<p>FORMAT : ${post.acf?.format || ''}</p>
-
-    });
-
-    // Maintenant que tous les éléments sont dans le DOM, ajoutez les écouteurs
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    galleryItems.forEach(item => {
-      const infoOverlay = item.querySelector('.info_overlay');
-
-      item.addEventListener('mouseenter', () => {
-        infoOverlay.classList.add('visible');
-        console.log('Survol détecté');
-      });
-
-      item.addEventListener('mouseleave', () => {
-        infoOverlay.classList.remove('visible');
-      });
-    });
-
-    const apercus = document.querySelectorAll('.apercu')
-    apercus.forEach(apercu=>{
-      const lightbox_content = item.querySelectory('.lightbox');
-
-        apercu.addEventListener('click', () =>{
-            lightbox_content.classList.add('visible');
+    //Au clic sur une option de catégorie, on met à jour le texte de selected_category et on masque les options
+    category_input.forEach(option => {
+        option.addEventListener('click', () => {
+            pCategory.textContent = option.textContent;
+            options_category.classList.add('hide');
+            options_category.classList.remove('active');
         });
     });
+});
 
-  })
-  .catch(error => console.error(error));
+//JAVASCRIPT POUR LE BOUTON DE FILTRE DE "FORMAT" DANS LA GALERIE D'ACCUEIL
+const format_filter = document.querySelector('.format_filter');
+const selected_format = format_filter.querySelector('.selected_format');
+const options_format = format_filter.querySelector('.options_format');
+const format_input = format_filter.querySelectorAll('.option_format_input');
+const pFormat = selected_format.querySelector('p');
 
+//Au clic sur la div selected_format, on affiche/masque les options de formats
+selected_format.addEventListener('click', () => {
+    options_format.classList.toggle('active');
+    options_format.classList.toggle('hide');
 
-
-
-        // Création de l'overlay
-        const overlay = document.createElement('div');
-        overlay.classList.add('lightbox-overlay');
-
-        // Création de la lightbox
-        const lightbox = document.createElement('div');
-        lightbox.classList.add('lightbox');
-        lightbox.innerHTML = `
-        <div class="light_rang1">
-            <article class="fleche_prec">
-              <img src="path/to/fleche_prec.png" alt="Précédente"/>
-              <p>Précédente</p>
-            </article>
-            <img src="${item.dataset.singlephoto}" alt="Photo" />
-            <article class="fleche_suiv">
-              <p>Suivante</p>
-              <img src="path/to/fleche_suiv.png" alt="Suivante" />
-            </article>
-          </div>
-          <div class="light_rang2">
-            <p>${item.dataset.reference}</p>
-            <p>${item.dataset.categories}</p>
-          </div>
-        `;
-
-        // Ajout de l'overlay et lightbox au body
-        document.body.appendChild(overlay);
-        document.body.appendChild(lightbox);
-
-        // Ajouter classe pour bloquer scroll sur body
-        document.body.classList.add('no-scroll');
-
-        // Fermer lightbox au clic sur l'overlay
-        overlay.addEventListener('click', () => {
-        lightbox.remove();
-        overlay.remove();
-        document.body.classList.remove('no-scroll');
+    //Au clic sur une option de format, on met à jour le texte de selected_format et on masque les options
+    format_input.forEach(option => {
+        option.addEventListener('click', () => {
+            pFormat.textContent = option.textContent;
+            options_format.classList.add('hide');
+            options_format.classList.remove('active');
         });
+    });
+});
+
+//JAVASCRIPT POUR LE BOUTON DE FILTRE DE "TRI DATE" DANS LA GALERIE D'ACCUEIL
+const date_filter = document.querySelector('.date_filter');
+const selected_date = date_filter.querySelector('.selected_date');
+const options_date = date_filter.querySelector('.options_date');
+const date_input = date_filter.querySelectorAll('.option_date_input');
+const pDate = selected_date.querySelector('p');
+
+//Au clic sur la div selected_date, on affiche/masque les options de date
+selected_date.addEventListener('click', () => {
+    options_date.classList.toggle('active');
+    options_date.classList.toggle('hide');
+
+    //Au clic sur une option de date, on met à jour le texte de selected_date et on masque les options
+    date_input.forEach(option => {
+        option.addEventListener('click', () => {
+            pDate.textContent = option.textContent;
+            options_date.classList.add('hide');
+            options_date.classList.remove('active');
+        });
+    });
+});
+

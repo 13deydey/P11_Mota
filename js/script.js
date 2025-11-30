@@ -1,68 +1,4 @@
-//JAVASCRIPT POUR LE BOUTON DE FILTRE DE "CATÉGORIE" DANS LA GALERIE D'ACCUEIL
-const category_filter = document.querySelector('.category_filter');
-const selected_category = category_filter.querySelector('.selected_category');
-const options_category = category_filter.querySelector('.options_category');
-const category_input = category_filter.querySelectorAll('.option_category_input');
-const pCategory = selected_category.querySelector('p');
 
-//Au clic sur la div selected_category, on affiche/masque les options de catégorie
-selected_category.addEventListener('click', () => {
-    options_category.classList.toggle('active');
-    options_category.classList.toggle('hide');
-
-    //Au clic sur une option de catégorie, on met à jour le texte de selected_category et on masque les options
-    category_input.forEach(option => {
-        option.addEventListener('click', () => {
-            pCategory.textContent = option.textContent;
-            options_category.classList.add('hide');
-            options_category.classList.remove('active');
-        });
-    });
-});
-
-//JAVASCRIPT POUR LE BOUTON DE FILTRE DE "FORMAT" DANS LA GALERIE D'ACCUEIL
-const format_filter = document.querySelector('.format_filter');
-const selected_format = format_filter.querySelector('.selected_format');
-const options_format = format_filter.querySelector('.options_format');
-const format_input = format_filter.querySelectorAll('.option_format_input');
-const pFormat = selected_format.querySelector('p');
-
-//Au clic sur la div selected_format, on affiche/masque les options de formats
-selected_format.addEventListener('click', () => {
-    options_format.classList.toggle('active');
-    options_format.classList.toggle('hide');
-
-    //Au clic sur une option de format, on met à jour le texte de selected_format et on masque les options
-    format_input.forEach(option => {
-        option.addEventListener('click', () => {
-            pFormat.textContent = option.textContent;
-            options_format.classList.add('hide');
-            options_format.classList.remove('active');
-        });
-    });
-});
-
-//JAVASCRIPT POUR LE BOUTON DE FILTRE DE "TRI DATE" DANS LA GALERIE D'ACCUEIL
-const date_filter = document.querySelector('.date_filter');
-const selected_date = date_filter.querySelector('.selected_date');
-const options_date = date_filter.querySelector('.options_date');
-const date_input = date_filter.querySelectorAll('.option_date_input');
-const pDate = selected_date.querySelector('p');
-
-//Au clic sur la div selected_date, on affiche/masque les options de date
-selected_date.addEventListener('click', () => {
-    options_date.classList.toggle('active');
-    options_date.classList.toggle('hide');
-
-    //Au clic sur une option de date, on met à jour le texte de selected_date et on masque les options
-    date_input.forEach(option => {
-        option.addEventListener('click', () => {
-            pDate.textContent = option.textContent;
-            options_date.classList.add('hide');
-            options_date.classList.remove('active');
-        });
-    });
-});
 
 //GALERIE ACCUEIL DES PHOTOS _ CPT UI 
 //JS POUR RÉCUPÉRER LES POSTS D'UN CUSTOM POST TYPE VIA L'API REST DE WORDPRESS
@@ -194,6 +130,92 @@ selected_date.addEventListener('click', () => {
   .catch(error => console.error(error));
 
 
+// Modale et overlay créés une fois
+const modaleContact = document.createElement('section');
+modaleContact.classList.add('modale-contact');
+modaleContact.innerHTML = `
+  <div class="modale-content">
+    <div class="titre">CONTACT</div>
+    <form>
+      <article>
+        <label for="name">Nom :</label>
+        <input type="text" id="name" name="name" required />
+      </article>
+      <article>
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" required />
+      </article>
+      <article>
+        <label for="reference">Ref. Photo :</label>
+        <input type="text" id="reference" name="reference" required />
+      </article>
+      <article>
+        <label for="message">Message :</label>
+        <input type="text" id="message" name="message" class="messageLong"/>
+      </article>
+      <button type="submit" class="submit-button">Envoyer</button>
+    </form>
+  </div>
+`;
+document.body.appendChild(modaleContact);
+
+const overlay = document.createElement('div');
+document.body.appendChild(overlay);
+
+// Fonctions ouverture / fermeture
+// La fonction openModale s'exécute avec un paramètre optionnel : la référence de la photo
+function openModale(photoReference = '') {
+  modaleContact.classList.add('visible');
+  overlay.classList.add('lightbox-overlay');
+  document.body.classList.add('no-scroll');
+
+  // Met à jour le champ de référence dans le formulaire
+  // 1. Récupère le champ de référence DOM pour l'employer en JavaScript
+  const referenceInput = modaleContact.querySelector('#reference');
+    // 2. Met à jour la valeur du champ avec la référence de la photo prise en paramètre de la fonction
+  referenceInput.value = photoReference;
+}
+
+function closeModale() {
+  modaleContact.classList.remove('visible');
+  overlay.classList.remove('lightbox-overlay');
+  document.body.classList.remove('no-scroll');
+}
+
+// Fermer au clic sur overlay
+overlay.addEventListener('click', closeModale);
+
+// Gestion du bouton de la page des photos
+const contactButton = document.querySelector('.contact_cta');
+if (contactButton) contactButton.addEventListener('click', function(event) {
+    event.preventDefault(); // Stoppe la navigation/soumission
+
+    //ref récupérée depuis l'attribut data-reference du bouton dans le template single-photo.php
+    const ref = this.getAttribute('data-reference');
+    console.log('Référence photo :', ref);
+    openModale(ref); // Ouvre la modale avec la référence de la photo
+});
+// Gestion du lien "Contact" dans le menu WordPress
+const menuContact = document.querySelector('#menu-item-87 a');
+if (menuContact) {
+    menuContact.addEventListener('click', function(event) {
+        //Stoppe la navigation vers la page de contact
+        event.preventDefault(); 
+        //lance l'ouverture de la modale sans référence de photo comme paramètre
+        openModale();
+    });
+}
+
+//RÉPÉTER LE TITRE "CONTACT" DANS LA MODALE
+const titreModale = modaleContact.querySelector('.titre');
+const texte = "Contact";
+const repeatedText5 = texte.repeat(5);  // répète 5 fois
+const repeatedText7 = texte.repeat(7);  // répète 7 fois
+
+titreModale.innerHTML = `
+    <span class="repeat5">${repeatedText5}</span>
+    <span class="repeat7">  ${repeatedText7}</span>
+`;
 
   /*
 a partir du fetch qui récupère toutes les imgs , récupérer les catégories

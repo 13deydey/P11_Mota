@@ -28,7 +28,11 @@ get_header();
     <div class="more">
         <div class="cta_button">
             <p>Cette photo vous intéresse ? </p>
-            <a href="<?php //lien vers la page de contact ?>" class="contact_cta">Contact</a>
+            <span class="contact_cta"
+                data-reference="<?php the_field('reference'); ?>"
+                >
+                Contact 
+            </span>
         </div>
         <div class="preview_next">
             <img src="<?php  the_field('singlephoto')?>" alt="Aperçu de la photo suivante" class="preview_image">

@@ -1,16 +1,32 @@
+<?php
+/**
+ * Template Name: Modale Contact
+ */
 
-
-<?php 
-// Fichier: modale_contact.php 
-// Ce fichier NE doit contenir que le HTML de la modale
+get_header(); 
 ?>
-<div id="modale-contact-form" class="modale-ajax modale-visible">
+
+ <section class="modale_contact" id="modale_contact">
     <div class="modale-content">
-        <button class="close-button">&times;</button>
-        <h2>Contactez-nous</h2>
-        <?php
-        // Affichage du formulaire Contact Form 7
-        echo do_shortcode( '[contact-form-7 id="123" title="Formulaire de contact 1"]' );
-        ?>
+        <div class="titre">CONTACT</div>
+        <form>
+            <article>
+                <label for="name">Nom :</label>
+                <input type="text" id="name" name="name" required />
+            </article>
+            <article>
+                <label for="email">Email :</label>
+                <input type="email" id="email" name="email" required />
+            </article>
+            <article>
+                <label for="reference">Ref. Photo :</label>
+                <input type="text" id="reference" name="reference" required />
+            </article>
+            <article>
+                <label for="message">Message :</label>
+                <input type="text" id="message" name="message" class="messageLong"/>
+            </article>
+            <button type="submit" class="submit-button">Envoyer</button>
+        </form>
     </div>
-</div>
+</section>
