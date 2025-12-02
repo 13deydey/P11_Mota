@@ -1,133 +1,215 @@
 //GALERIE ACCUEIL DES PHOTOS _ CPT UI 
+let currentPage = 1;
+const postsPerPage = 8;
 const gallery = document.querySelector('#gallery');
-if (gallery){
-    //JS POUR RÉCUPÉRER LES POSTS D'UN CUSTOM POST TYPE VIA L'API REST DE WORDPRESS
-    fetch('/wp-json/wp/v2/photo?_embed&per_page=8')
-    .then(response => response.json())
+const loadMoreButton = document.querySelector('.load_more_button');
+
+// Fonction pour gérer le chargement (initial ou suivant)
+function loadPhotos(pageNumber) {
+    //Utilisation de l'API REST pour TOUTES les requêtes
+    const restUrl = `/wp-json/wp/v2/photo?_embed&per_page=${postsPerPage}&page=${pageNumber}`;
+    if (loadMoreButton) {
+        loadMoreButton.disabled = true;
+        loadMoreButton.textContent = 'Chargement...';
+    }
+    fetch(restUrl)
+    .then(response => {
+        //Récupérer le total des pages (X-WP-TotalPages) dans le header
+        //parseInt pour convertir en nombre entier en JS
+        const totalPages = parseInt(response.headers.get('X-WP-TotalPages'));
+        if (loadMoreButton) {
+            loadMoreButton.dataset.totalPages = totalPages;
+        }
+        return response.json();
+    })
     .then(data => {
-
-    data.forEach(post => {
-        const article = document.createElement('article');
-        article.classList.add('gallery-item');
-        article.innerHTML = `
-        <a href="${post.link}">
-            <img src="${post.acf?.singlephoto || ''}" alt="${post.title.rendered}" />
-        </a>
-        `;
-
-        const info = document.createElement('div');
-        info.classList.add('info_overlay');
-        info.innerHTML = `
-        <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_fullscreen.png" alt="Aperçu lightbox" class="apercu"/>
-        <a href="${post.link}">
-            <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_eye.png" alt="Plein écran" class="pleinEcran"/>
-        </a>
-        <div class="infos-content">
-            <p>${post.acf?.titre || ''}</p>
-            <p>${post.acf?.categories || ''}</p>
-        </div>
-        `;
-
-        article.appendChild(info);
-        gallery.appendChild(article);
-
-        // Stocker les données utiles en dataset pour accès simple
-        article.dataset.singlephoto = post.acf?.singlephoto || '';
-        article.dataset.reference = post.acf?.reference || '';
-        article.dataset.categories = post.acf?.categories || '';
-        article.dataset.link = post.link;
-    });
-
-    const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
-    galleryItems.forEach(item => {
-        const infoOverlay = item.querySelector('.info_overlay');
-
-        item.addEventListener('mouseenter', () => {
-        infoOverlay.classList.add('visible');
-        });
-        item.addEventListener('mouseleave', () => {
-        infoOverlay.classList.remove('visible');
-        });
-
-        const apercu = item.querySelector('.apercu');
-        apercu.addEventListener('click', () => {
-        openLightbox(galleryItems.indexOf(item));
-
-        });
-    });
-
-    let currentIndex = 0;
-    function openLightbox(index) {
-        currentIndex = index;
-
-        const item = galleryItems[currentIndex];
-
-        // Mettre à jour la lightbox (overlay et contenu)
-        const overlay = document.createElement('div');
-        overlay.classList.add('lightbox-overlay');
-        document.body.appendChild(overlay);
-
-        let lightbox_content = document.querySelector('.lightbox');
-        if (!lightbox_content) {
-            lightbox_content = document.createElement('div');
-            lightbox_content.classList.add('lightbox');
-            document.body.appendChild(lightbox_content);
+        if (!data.length && currentPage === 1) {
+            // Aucun post trouvé au total
+            gallery.innerHTML = '<p>Aucune photo trouvée.</p>';
+            return;
         }
 
-        lightbox_content.innerHTML = `
-            <article class="fleche_prec">
-                <i class="fa-solid fa-arrow-left-long"></i>
-                <p>Précédente</p>
-            </article>
-            <article class="previsualisation">
-                <a href="${item.dataset.link}">
-                    <img src="${item.dataset.singlephoto}" alt="Photo sélectionnée" />
-                </a>
-                <div class="light_rang2">
-                    <p>${item.dataset.reference}</p>
-                    <p>${item.dataset.categories}</p>
-                </div>
-            </article>
-            <article class="fleche_suiv">
-                <p>Suivante</p>
-                <i class="fa-solid fa-arrow-right-long"></i>
-            </article>
-        `;
-
-        // Bloquer scroll
-        document.body.classList.add('no-scroll');
-
-        // Écouteur fermeture overlay
-        overlay.addEventListener('click', () => {
-            lightbox_content.remove();
-            overlay.remove();
-            document.body.classList.remove('no-scroll');
+        // Boucle pour afficher les articles
+        data.forEach(post => {
+            const article = document.createElement('article');
+            article.classList.add('gallery-item');
+            article.innerHTML = `
+            <a href="${post.link}">
+                <img src="${post.acf?.singlephoto || ''}" alt="${post.title.rendered}" />
+            </a>
+            `;
+    
+            const info = document.createElement('div');
+            info.classList.add('info_overlay');
+            info.innerHTML = `
+            <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_fullscreen.png" alt="Aperçu lightbox" class="apercu"/>
+            <a href="${post.link}">
+                <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_eye.png" alt="Plein écran" class="pleinEcran"/>
+            </a>
+            <div class="infos-content">
+                <p>${post.acf?.titre || ''}</p>
+                <p>${post.acf?.categories || ''}</p>
+            </div>
+            `;
+    
+            article.appendChild(info);
+            gallery.appendChild(article);
+    
+            // Stocker les données utiles en dataset pour accès simple
+            article.dataset.singlephoto = post.acf?.singlephoto || '';
+            article.dataset.reference = post.acf?.reference || '';
+            article.dataset.categories = post.acf?.categories || '';
+            article.dataset.link = post.link;
         });
 
-        // Navigation précédente
-        const precedente = lightbox_content.querySelector('.fleche_prec');
-        precedente.addEventListener('click', () => {
-            // moyen de boucler en récupérant le modulo de la longueur du tableau CAD le reste de la division
-            // si photo n°6, donc élément n°5 pour une longueur de 6, (5-1+6)%6 = 4 donc on revient à l'élément d'avant
-            // car 10%6 => 10/6 = 1 reste 4 donc on récupère le 4
-            currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
-            openLightbox(currentIndex);
-        });
+        //Mise à jour de la page courante
+        currentPage++;
+        if (loadMoreButton) {
+            loadMoreButton.disabled = false;
+            loadMoreButton.textContent = 'Charger plus';
 
-        // Navigation suivante
-        const suivante = lightbox_content.querySelector('.fleche_suiv');
-        suivante.addEventListener('click', () => {
-            // moyen de boucler en récupérant le modulo de la longueur du tableau CAD le reste de la division
-            //si photo 5, élément n°4 pour une longueur de 5, (4+1)%5 = 0 donc on revient au début
-            currentIndex = (currentIndex + 1) % galleryItems.length;
-            openLightbox(currentIndex);
-        });
-    }
+            //Masquer le bouton si dernière page atteinte
+            const totalPages = parseInt(loadMoreButton.dataset.totalPages);
+            if (currentPage > totalPages) {
+                loadMoreButton.style.display = 'none';
+            }
+        }
+        //Réinitialiser les écouteurs de la lightbox
+        initGalleryListeners();
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+        console.error("Erreur de chargement des photos:", error);
+        if (loadMoreButton) {
+            loadMoreButton.textContent = 'Erreur de chargement';
+        }
+    });
 }
 
 
+let currentIndex = 0;
+const galleryItems = [];
+
+// Fonction pour ouvrir la lightbox
+function openLightbox(index) {
+    currentIndex = index;
+    
+    //si overlay existe déjà, le supprimer avant d'en créer un nouveau
+    if(document.querySelector('.lightbox-overlay')){
+        document.querySelector('.lightbox-overlay').remove();
+    }
+
+    const overlay = document.createElement('div');
+    overlay.classList.add('lightbox-overlay');
+    if(overlay){overlay.remove();} // Supprimer l'overlay précédent s'il existe
+    document.body.appendChild(overlay);
+
+    const item = galleryItems[currentIndex];
+
+    // Mettre à jour la lightbox (overlay et contenu)
+
+    let lightbox_content = document.querySelector('.lightbox');
+    if (!lightbox_content) {
+        lightbox_content = document.createElement('div');
+        lightbox_content.classList.add('lightbox');
+        document.body.appendChild(lightbox_content);
+    }
+
+    lightbox_content.innerHTML = `
+        <article class="fleche_prec">
+            <i class="fa-solid fa-arrow-left-long"></i>
+            <p>Précédente</p>
+        </article>
+        <article class="previsualisation">
+            <a href="${item.dataset.link}">
+                <img src="${item.dataset.singlephoto}" alt="Photo sélectionnée" />
+            </a>
+            <div class="light_rang2">
+                <p>${item.dataset.reference}</p>
+                <p>${item.dataset.categories}</p>
+            </div>
+        </article>
+        <article class="fleche_suiv">
+            <p>Suivante</p>
+            <i class="fa-solid fa-arrow-right-long"></i>
+        </article>
+    `;
+
+    // Bloquer scroll
+    document.body.classList.add('no-scroll');
+
+    // Écouteur fermeture overlay
+    overlay.addEventListener('click', () => {
+        lightbox_content.remove();
+        overlay.remove();
+        document.body.classList.remove('no-scroll');
+    });
+
+    // Navigation précédente
+    const precedente = lightbox_content.querySelector('.fleche_prec');
+    precedente.addEventListener('click', () => {
+        // moyen de boucler en récupérant le modulo de la longueur du tableau CAD le reste de la division
+        // si photo n°6, donc élément n°5 pour une longueur de 6, (5-1+6)%6 = 4 donc on revient à l'élément d'avant
+        // car 10%6 => 10/6 = 1 reste 4 donc on récupère le 4
+        currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+        openLightbox(currentIndex);
+    });
+
+    // Navigation suivante
+    const suivante = lightbox_content.querySelector('.fleche_suiv');
+    suivante.addEventListener('click', () => {
+        // moyen de boucler en récupérant le modulo de la longueur du tableau CAD le reste de la division
+        //si photo 5, élément n°4 pour une longueur de 5, (4+1)%5 = 0 donc on revient au début
+        currentIndex = (currentIndex + 1) % galleryItems.length;
+        openLightbox(currentIndex);
+    });
+}
+
+// Fonction pour initialiser les écouteurs sur tous les articles (nouveaux et anciens)
+function initGalleryListeners() {
+    galleryItems.length = 0; // Réinitialiser le tableau
+    Array.from(document.querySelectorAll('.gallery-item')).forEach(item => galleryItems.push(item));
+    galleryItems.forEach(item => {
+        const infoOverlay = item.querySelector('.info_overlay');
+
+        // C'est ici que vous vérifiez si l'écouteur n'est pas déjà là (bonne pratique)
+        if (!item.dataset.listenersAdded) { 
+            // 1. Écouteurs de survol
+            item.addEventListener('mouseenter', () => {
+                infoOverlay.classList.add('visible');
+            });
+            item.addEventListener('mouseleave', () => {
+                infoOverlay.classList.remove('visible');
+            });
+
+            // 2. Écouteur d'ouverture Lightbox
+            const apercu = item.querySelector('.apercu');
+            apercu.addEventListener('click', () => {
+                // Trouver l'index de l'élément dans le tableau global
+                const index = galleryItems.indexOf(item); 
+                openLightbox(index);
+            });
+            item.dataset.listenersAdded = true; // Marquer l'élément comme initialisé
+        }    
+    });
+}
+
+// Initialisation du chargement des photos
+if (gallery) {
+    // 1. Chargement Initial (Page 1)
+    loadPhotos(currentPage); 
+}
+
+if (loadMoreButton) {
+    // 2. Écouteur du Bouton (Charge la page suivante)
+    loadMoreButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Le bouton appelle la fonction pour la page actuelle qui est maintenant (1+1=2)
+        loadPhotos(currentPage); 
+    });
+}
+
+
+//MODALE DE CONTACT AVEC RÉFÉRENCE PHOTO PRÉ-REMPLIE
 // Modale et overlay créés une fois
 const modaleContact = document.createElement('section');
 modaleContact.classList.add('modale-contact');
@@ -167,7 +249,7 @@ function openModale(photoReference = '') {
   overlay.classList.add('lightbox-overlay');
   document.body.classList.add('no-scroll');
 
-  // Met à jour le champ de référence dans le formulaire
+  // Met à jour le champ de référence SELON FORMULAIRE CONTACT FORM 7
   // 1. Récupère le champ de référence DOM pour l'employer en JavaScript
   const referenceInput = modaleContact.querySelector('#reference');
     // 2. Met à jour la valeur du champ avec la référence de la photo prise en paramètre de la fonction

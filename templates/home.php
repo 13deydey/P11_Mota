@@ -58,6 +58,13 @@ get_header();
     <div class="galerie_photos" id="gallery">
         <!-- compléter avec script.js pour la galerie d'éléments photo de CPT UI-->
     </div>
+
+    <button
+	class="load_more_button"
+    data-nonce="<?php echo wp_create_nonce('galerie_load_more'); ?>"
+    data-action="galerie_load_more"
+    data-ajaxurl="<?php echo admin_url( 'admin-ajax.php' ); ?>"
+    >Charger plus</button>   
 </section>
 
 <?php get_footer(); ?>

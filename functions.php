@@ -150,3 +150,91 @@ function expose_acf_fields_in_rest() {
     ));
 }
 add_action('rest_api_init', 'expose_acf_fields_in_rest');
+
+
+//AJAX LOAD MORE POUR LA GALERIE D'ACCUEIL
+add_action('wp_ajax_galerie_load_more', 'galerie_load_more_callback');
+add_action('wp_ajax_nopriv_galerie_load_more', 'galerie_load_more_callback');
+
+function galerie_load_more_callback() {
+    // Vérification du nonce pour la sécurité
+    if(
+        !isset($_POST['nonce']) or !wp_verify_nonce($_REQUEST['nonce'], 'galerie_load_more')
+    ) {
+        wp_send_json_error('Nonce invalide', 403);
+    }
+
+    // Définir le slug du CPT
+    $cpt_slug = 'photo';
+    // Initialiser la pagination
+    $posts_per_page = isset($_POST['posts_per_page']) ? intval($_POST['posts_per_page']) : 8;
+    // Assurez-vous de récupérer le numéro de page envoyé par JavaScript
+    $current_page = isset($_POST['page']) ? intval($_POST['page']) : 1;
+
+    $args_slug = [
+        'post_type' => $cpt_slug,
+        'posts_per_page' => $posts_per_page,
+        'post_status'    => 'publish',
+        'paged'          => $current_page,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ];
+    $cpt_posts = get_posts($args_slug);
+
+    // 2. Requête WP_Query pour la pagination
+        //méthode standard de WordPress pour interroger la base de données et récupérer tout type de contenu
+    $the_query = new WP_Query($args_slug);
+    $output_html = '';
+
+    if ( $the_query->have_posts() ) {
+        error_log('Posts trouvés: ' . $the_query->post_count);
+        // 3. Boucle et génération du HTML pour chaque post récupéré
+        while ( $the_query->have_posts() ) {
+            $the_query->the_post();
+            // Récupération des champs ACF et de génération de la carte photo 
+            $single_photo_url = get_field('singlephoto'); 
+            $reference = get_field('reference');
+            $categories = get_field('categories');
+        
+            $post_link = get_permalink();
+            $post_title = get_the_title();
+
+            // Génération du HTML pour chaque carte photo
+            $output_html .= '
+            <article class="gallery-item" 
+                 data-singlephoto="' . esc_attr($single_photo_url) . '" 
+                 data-reference="' . esc_attr($reference) . '" 
+                 data-categories="' . esc_attr($categories) . '"
+                 data-link="' . esc_url($post_link) . '">
+            
+                <a href="' . esc_url($post_link) . '">
+                    <img src="' . esc_url($single_photo_url) . '" alt="' . esc_attr($post_title) . '" />
+                </a>
+                
+                <div class="info_overlay">
+                    <img src="' . get_template_directory_uri() . '/assets/iconeSurvol/Icon_fullscreen.png" alt="Aperçu lightbox" class="apercu"/>
+                    
+                    <a href="' . esc_url($post_link) . '">
+                        <img src="' . get_template_directory_uri() . '/assets/iconeSurvol/Icon_eye.png" alt="Plein écran" class="pleinEcran"/>
+                    </a>
+                    
+                    <div class="infos-content">
+                        <p>' . esc_html($reference) . '</p>
+                        <p>' . esc_html($categories) . '</p>
+                    </div>
+                </div>
+            </article>';
+        }
+        wp_reset_postdata();
+    }else{error_log('Aucun post trouvé avec ces arguments.');}
+
+    // 4. Retour de la Réponse AJAX
+    wp_send_json_success([
+        //Transmet la chaîne HTML générée par PHP (les nouvelles cartes photos) au JavaScript.
+        'html' => $output_html,
+        'max_pages' => $the_query->max_num_pages,
+        'current_page' => $current_page,
+    ]);
+    
+    die();
+}
