@@ -5,10 +5,17 @@ const gallery = document.querySelector('#gallery');
 const loadMoreButton = document.querySelector('.load_more_button');
 
 // Fonction pour gérer le chargement (initial ou suivant)
-function loadPhotos(pageNumber) {
+function loadPhotos(pageNumber = '', categoryFilter = '', categoryFormat = '') {
+    //Si pageNumber est vide, on utilise toutes les pages
+    //if (!pageNumber) {
+    //    pageNumber = totalPages;
+    //}
+
     //Utilisation de l'API REST pour TOUTES les requêtes
     const restUrl = `/wp-json/wp/v2/photo?_embed&per_page=${postsPerPage}&page=${pageNumber}`;
     if (loadMoreButton) {
+        //la fonction loadMore appelle chargement initial ou Suivant 
+        // donc Désactiver le bouton pendant le chargement
         loadMoreButton.disabled = true;
         loadMoreButton.textContent = 'Chargement...';
     }
@@ -23,6 +30,8 @@ function loadPhotos(pageNumber) {
         return response.json();
     })
     .then(data => {
+        //Vérifier si des articles ont été retournés
+        //si 0length=0article et page 1 c'est qu'il n'y a aucun post au total
         if (!data.length && currentPage === 1) {
             // Aucun post trouvé au total
             gallery.innerHTML = '<p>Aucune photo trouvée.</p>';
@@ -62,29 +71,35 @@ function loadPhotos(pageNumber) {
             article.dataset.link = post.link;
         });
 
-        //Mise à jour de la page courante
+        //Mise à jour de la page courante 
+        //lorsque les photos sont chargées avec succès la page courante s'incrémente de 1
+        // le bouton n'est plus disabled et son texte redevient "Charger plus"
         currentPage++;
         if (loadMoreButton) {
             loadMoreButton.disabled = false;
             loadMoreButton.textContent = 'Charger plus';
 
-            //Masquer le bouton si dernière page atteinte
+            //Masquer le bouton si dernière page atteinte 
+            // en reprenant la const totalPages définie plus haut avec "X-WP-TotalPages"
             const totalPages = parseInt(loadMoreButton.dataset.totalPages);
             if (currentPage > totalPages) {
                 loadMoreButton.style.display = 'none';
             }
         }
         //Réinitialiser les écouteurs de la lightbox
+        //cad réappeler la fonction GalleryListeners,
+        //afin que les éléments de la nouvelle page soient eux aussi push dans le tableau Gallery 
+        // et aient eux aussi des écouteurs 
         initGalleryListeners();
     })
     .catch(error => {
+        //définir le comportement en cas d'erreur dans la requête fetch
         console.error("Erreur de chargement des photos:", error);
         if (loadMoreButton) {
             loadMoreButton.textContent = 'Erreur de chargement';
         }
     });
 }
-
 
 let currentIndex = 0;
 const galleryItems = [];
@@ -100,7 +115,6 @@ function openLightbox(index) {
 
     const overlay = document.createElement('div');
     overlay.classList.add('lightbox-overlay');
-    if(overlay){overlay.remove();} // Supprimer l'overlay précédent s'il existe
     document.body.appendChild(overlay);
 
     const item = galleryItems[currentIndex];
@@ -167,7 +181,7 @@ function openLightbox(index) {
 // Fonction pour initialiser les écouteurs sur tous les articles (nouveaux et anciens)
 function initGalleryListeners() {
     galleryItems.length = 0; // Réinitialiser le tableau
-    Array.from(document.querySelectorAll('.gallery-item')).forEach(item => galleryItems.push(item));
+    Array.from(document.querySelectorAll('.gallery-item')).forEach(item => galleryItems.push(item));// Remplir le tableau avec les éléments actuels
     galleryItems.forEach(item => {
         const infoOverlay = item.querySelector('.info_overlay');
 
@@ -198,7 +212,6 @@ if (gallery) {
     // 1. Chargement Initial (Page 1)
     loadPhotos(currentPage); 
 }
-
 if (loadMoreButton) {
     // 2. Écouteur du Bouton (Charge la page suivante)
     loadMoreButton.addEventListener('click', function(e) {
@@ -430,3 +443,104 @@ Attention récupérer toutes les cat. avec AJAX
     //console.log(categories);
 //})
 //.catch(error => console.error(error));
+
+
+function filtreCategorie(){
+    const selected_category_text = document.querySelector('.selected_category p');
+    const selected_category_zone = document.querySelector('.selected_category');
+    const optionsCategoryContainer = document.querySelector('.options_category');
+
+    if (!selected_category_zone || !optionsCategoryContainer) {
+        console.error("Éléments de filtre non trouvés. Vérifiez les sélecteurs.");
+        return; 
+    }else{
+        console.log("Éléments de filtre trouvés avec succès.");
+    }
+    
+    selected_category_text.textContent = 'Catégories';
+    const categoriesSet = new Set();
+    console.log("Set des catégories créé", categoriesSet); //Vérification dans la console
+    console.log("Cible selected_category :", selected_category_text.textContent); //Vérification dans la console
+    console.log("Cible optionsCategoryContainer :", optionsCategoryContainer); //Vérification dans la console
+
+    selected_category_zone.addEventListener('click', function(event) {
+        optionsCategoryContainer.classList.toggle('active');
+        console.log("Clic sur catégorie"); //Vérification dans la console
+        if (
+            optionsCategoryContainer.classList.contains('active') &&
+            !optionsCategoryContainer.contains(event.target) &&
+            !selected_category_zone.contains(event.target)
+        ) {
+            optionsCategoryContainer.classList.toggle('active');
+        }    });
+
+    fetch('/wp-json/wp/v2/photo?_embed')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // 1. Nettoyage du conteneur avant injection
+        optionsCategoryContainer.innerHTML = '';
+
+        // Récupérer les catégories uniques
+        data.forEach(post => {
+            if (post.acf?.categories) {
+                categoriesSet.add(post.acf.categories);
+                console.log(post.acf?.categories); //Vérification dans la console
+            }
+        });
+
+        // Créer et injecter les options de catégorie
+        const tableauCategories = Array.from(categoriesSet);
+        console.log("tableau des catégories créé", tableauCategories); //Vérification dans la console
+
+        //// Option 'Toutes' ou 'Default'
+        //const defaultOption = document.createElement('span');
+        //defaultOption.classList.add('option_category_input', 'default-option');
+        //defaultOption.setAttribute('data-value', ''); // Valeur vide pour le filtre 'Tous'
+        //defaultOption.textContent = 'Toutes les catégories';
+        //optionsCategoryContainer.appendChild(defaultOption);
+
+
+        tableauCategories.forEach(category => {
+            const optionCatSpan = document.createElement('span');
+            optionCatSpan.classList.add('option_category_input');
+            optionCatSpan.setAttribute('data-value', category);
+            optionCatSpan.textContent = category;
+            optionsCategoryContainer.appendChild(optionCatSpan);
+            console.log("Span par catégorie créé", optionCatSpan); //Vérification dans la console
+        });
+
+        // 4.Ajouter les écouteurs aux NOUVEAUX éléments
+        //const optionCategories = optionsCategoryContainer.querySelectorAll('.option_category_input');
+        const optionCategories = document.querySelectorAll('.options_category .option_category_input');
+        optionCategories.forEach(option => {
+            // Événements d'interaction (mouseenter/mouseleave)
+            option.addEventListener('mouseenter',() => {
+                option.classList.add('survolFiltre');
+                console.log("Survol de l'option catégorie"); //Vérification dans la console
+            });
+            option.addEventListener('mouseleave',() => {
+                option.classList.remove('survolFiltre');
+            });
+
+            // Événement de sélection (click)
+            option.addEventListener('click', function() {
+                const selectedValue = this.getAttribute('data-value');
+                selected_category_text.textContent = selectedValue || 'Catégories';
+                console.log("Catégorie sélectionnée :", selectedValue); //Vérification dans la console
+                optionsCategoryContainer.classList.remove('visible');
+                 // Ajouter ici la logique pour filtrer les photos en fonction de la catégorie sélectionnée
+                loadPhotos(undefined, selectedValue, undefined);   
+            });
+        });
+    })
+    .catch(error => console.error(error));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    filtreCategorie();
+});

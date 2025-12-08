@@ -25,11 +25,10 @@ get_header();
      <div class="galerie_filtre">
         <div class="filter_gauche">
             <div class="category_filter">
-                <div class="selected_category">
-                    <p>Catégories</p>
+                <div class="selected_category ">
+                    <p>a remplir</p>
                 </div>
-                <div class="options_category hide">
-                    <div data-category="A REMPLACER PAR UN DES CHOIX DE LA CATÉGORIE" class="option_category_input">A REMPLACER PAR LE NOM DU CHOIX</div>
+                <div class="options_category ">
                 </div>
             </div>
             <div class="format_filter">
