@@ -1,11 +1,11 @@
 <?php
 /**
- * Template Name: Page Vide
+ * Template Name: A propos
  */
 get_header();
 ?>
 
-    <main id="page-vide" class="vide">
+    <main id="a-propos" class="a-propos-main">
 
     <?php
         // DÉBUT DE LA BOUCLE WORDPRESS 

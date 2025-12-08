@@ -109,3 +109,135 @@ selected_date.addEventListener('click', () => {
     });
 });
 
+
+
+
+//GALERIE ACCUEIL DES PHOTOS _ CPT UI 
+const gallery = document.querySelector('#gallery');
+const loadMoreButton = document.getElementById('load-more-button');
+if (gallery){
+    //JS POUR RÉCUPÉRER LES POSTS D'UN CUSTOM POST TYPE VIA L'API REST DE WORDPRESS
+    fetch('/wp-json/wp/v2/photo?_embed&per_page=8')
+    .then(response => response.json())
+    .then(data => {
+
+    data.forEach(post => {
+        const article = document.createElement('article');
+        article.classList.add('gallery-item');
+        article.innerHTML = `
+        <a href="${post.link}">
+            <img src="${post.acf?.singlephoto || ''}" alt="${post.title.rendered}" />
+        </a>
+        `;
+
+        const info = document.createElement('div');
+        info.classList.add('info_overlay');
+        info.innerHTML = `
+        <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_fullscreen.png" alt="Aperçu lightbox" class="apercu"/>
+        <a href="${post.link}">
+            <img src="wp-content/themes/motaTheme/assets/iconeSurvol/Icon_eye.png" alt="Plein écran" class="pleinEcran"/>
+        </a>
+        <div class="infos-content">
+            <p>${post.acf?.titre || ''}</p>
+            <p>${post.acf?.categories || ''}</p>
+        </div>
+        `;
+
+        article.appendChild(info);
+        gallery.appendChild(article);
+
+        // Stocker les données utiles en dataset pour accès simple
+        article.dataset.singlephoto = post.acf?.singlephoto || '';
+        article.dataset.reference = post.acf?.reference || '';
+        article.dataset.categories = post.acf?.categories || '';
+        article.dataset.link = post.link;
+    });
+
+    const galleryItems = Array.from(document.querySelectorAll('.gallery-item'));
+    galleryItems.forEach(item => {
+        const infoOverlay = item.querySelector('.info_overlay');
+
+        item.addEventListener('mouseenter', () => {
+        infoOverlay.classList.add('visible');
+        });
+        item.addEventListener('mouseleave', () => {
+        infoOverlay.classList.remove('visible');
+        });
+
+        const apercu = item.querySelector('.apercu');
+        apercu.addEventListener('click', () => {
+        openLightbox(galleryItems.indexOf(item));
+
+        });
+    });
+
+    let currentIndex = 0;
+    function openLightbox(index) {
+        currentIndex = index;
+
+        const item = galleryItems[currentIndex];
+
+        // Mettre à jour la lightbox (overlay et contenu)
+        const overlay = document.createElement('div');
+        overlay.classList.add('lightbox-overlay');
+        document.body.appendChild(overlay);
+
+        let lightbox_content = document.querySelector('.lightbox');
+        if (!lightbox_content) {
+            lightbox_content = document.createElement('div');
+            lightbox_content.classList.add('lightbox');
+            document.body.appendChild(lightbox_content);
+        }
+
+        lightbox_content.innerHTML = `
+            <article class="fleche_prec">
+                <i class="fa-solid fa-arrow-left-long"></i>
+                <p>Précédente</p>
+            </article>
+            <article class="previsualisation">
+                <a href="${item.dataset.link}">
+                    <img src="${item.dataset.singlephoto}" alt="Photo sélectionnée" />
+                </a>
+                <div class="light_rang2">
+                    <p>${item.dataset.reference}</p>
+                    <p>${item.dataset.categories}</p>
+                </div>
+            </article>
+            <article class="fleche_suiv">
+                <p>Suivante</p>
+                <i class="fa-solid fa-arrow-right-long"></i>
+            </article>
+        `;
+
+        // Bloquer scroll
+        document.body.classList.add('no-scroll');
+
+        // Écouteur fermeture overlay
+        overlay.addEventListener('click', () => {
+            lightbox_content.remove();
+            overlay.remove();
+            document.body.classList.remove('no-scroll');
+        });
+
+        // Navigation précédente
+        const precedente = lightbox_content.querySelector('.fleche_prec');
+        precedente.addEventListener('click', () => {
+            // moyen de boucler en récupérant le modulo de la longueur du tableau CAD le reste de la division
+            // si photo n°6, donc élément n°5 pour une longueur de 6, (5-1+6)%6 = 4 donc on revient à l'élément d'avant
+            // car 10%6 => 10/6 = 1 reste 4 donc on récupère le 4
+            currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+            openLightbox(currentIndex);
+        });
+
+        // Navigation suivante
+        const suivante = lightbox_content.querySelector('.fleche_suiv');
+        suivante.addEventListener('click', () => {
+            // moyen de boucler en récupérant le modulo de la longueur du tableau CAD le reste de la division
+            //si photo 5, élément n°4 pour une longueur de 5, (4+1)%5 = 0 donc on revient au début
+            currentIndex = (currentIndex + 1) % galleryItems.length;
+            openLightbox(currentIndex);
+        });
+    }
+    })
+    .catch(error => console.error(error));
+}

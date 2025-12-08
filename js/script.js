@@ -92,7 +92,7 @@ const galleryItems = [];
 // Fonction pour ouvrir la lightbox
 function openLightbox(index) {
     currentIndex = index;
-    
+
     //si overlay existe déjà, le supprimer avant d'en créer un nouveau
     if(document.querySelector('.lightbox-overlay')){
         document.querySelector('.lightbox-overlay').remove();
@@ -211,57 +211,53 @@ if (loadMoreButton) {
 
 //MODALE DE CONTACT AVEC RÉFÉRENCE PHOTO PRÉ-REMPLIE
 // Modale et overlay créés une fois
-const modaleContact = document.createElement('section');
-modaleContact.classList.add('modale-contact');
-modaleContact.innerHTML = `
-  <div class="modale-content">
-    <div class="titre">CONTACT</div>
-    <form>
-      <article>
-        <label for="name">Nom :</label>
-        <input type="text" id="name" name="name" required />
-      </article>
-      <article>
-        <label for="email">Email :</label>
-        <input type="email" id="email" name="email" required />
-      </article>
-      <article>
-        <label for="reference">Ref. Photo :</label>
-        <input type="text" id="reference" name="reference" required />
-      </article>
-      <article>
-        <label for="message">Message :</label>
-        <input type="text" id="message" name="message" class="messageLong"/>
-      </article>
-      <button type="submit" class="submit-button">Envoyer</button>
-    </form>
-  </div>
-`;
-document.body.appendChild(modaleContact);
-
+const modaleContact = document.querySelector('.modale-contact');
 const overlay = document.createElement('div');
 document.body.appendChild(overlay);
 
 // Fonctions ouverture / fermeture
 // La fonction openModale s'exécute avec un paramètre optionnel : la référence de la photo
 function openModale(photoReference = '') {
-  modaleContact.classList.add('visible');
-  overlay.classList.add('lightbox-overlay');
-  document.body.classList.add('no-scroll');
 
   // Met à jour le champ de référence SELON FORMULAIRE CONTACT FORM 7
   // 1. Récupère le champ de référence DOM pour l'employer en JavaScript
-  const referenceInput = modaleContact.querySelector('#reference');
-    // 2. Met à jour la valeur du champ avec la référence de la photo prise en paramètre de la fonction
+  let referenceInput = modaleContact.querySelector('input[name="ref-photo"]');
+  // 2. Met à jour la valeur 
   referenceInput.value = photoReference;
+
+    // Affiche la modale et l'overlay
+  modaleContact.classList.add('visible');
+  overlay.classList.add('lightbox-overlay');
+  document.body.classList.add('no-scroll');
 }
 function closeModale() {
   modaleContact.classList.remove('visible');
   overlay.classList.remove('lightbox-overlay');
   document.body.classList.remove('no-scroll');
 }
+
 // Fermer au clic sur overlay
 overlay.addEventListener('click', closeModale);
+
+// FERMETURE AU CLIC SUR BOUTON FERMER SELON LES CHAMPS REQUIS DE CONTACT FORM 7
+const closeButton = modaleContact.querySelector('.wpcf7-submit');
+const contactForm = document.querySelector('form.wpcf7-form'); 
+if (contactForm) {
+    // 1. Utilisez classList.contains() pour vérifier si formulaire INVALID auquel cas garder modale ouverte
+    if (contactForm.classList.contains('invalid')) {
+        //si formulaire invalide, les errreurs de validation sont présentes
+        console.log("Le formulaire contient des erreurs de validation.");
+        modaleContact.classList.add('visible');  
+        overlay.classList.add('lightbox-overlay');
+        document.body.classList.add('no-scroll');
+    } 
+    //2. sinon, le formulaire est valide ou n'a pas encore été soumis et agit comme d'habitude
+    else {
+        console.log("Le formulaire est valide (ou n'a pas encore été soumis).");
+        // Placez ici le code à exécuter si la classe n'est pas présente
+    }
+}
+
 // Gestion du bouton de la page des photos
 const contactButton = document.querySelector('.contact_cta');
 if (contactButton) contactButton.addEventListener('click', function(event) {
@@ -290,6 +286,7 @@ titreModale.innerHTML = `
     <span class="repeat5">${repeatedText5}</span>
     <span class="repeat7">  ${repeatedText7}</span>
 `;
+
 
 //JAVASCRIPT ET AJAX POUR LES FLECHES PREC/SUIV DU PREVISUALISER DES SINGLE PHOTO PAGES
 const previewImage = document.querySelector('.preview_image');

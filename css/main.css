@@ -15,6 +15,14 @@
   width: 100%;
 }
 
+.menu-item-text a {
+  /* Supprime le soulignement et change la couleur */
+  text-decoration: none;
+  color: inherit; /* Utilise la couleur du texte normal du footer */
+  cursor: default; /* Change le curseur pour montrer que ce n'est pas un lien */
+  pointer-events: none; /* Empêche tout clic sur l'élément <a> */
+}
+
 body {
   width: 100%;
   margin: 0;
@@ -28,7 +36,10 @@ main {
   min-height: calc(100vh - 120px);
   background-color: #FFFFFF;
 }
-
+html{
+  margin:0px !important;
+  padding:0px !important ;
+}
 .site_header {
   width: 100%;
   max-width: 1440px;
@@ -68,6 +79,20 @@ main {
   align-items: center;
 }
 
+.vide, .a-propos-main{
+  width:90%;
+  margin:75px;
+  margin-top:50px;
+  min-height:500px;
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 13px;
+  color: #000000;
+
+  header, h2, h1{
+    text-transform: uppercase;
+  }
+}
 /*# sourceMappingURL=main.css.map */
 
 /*CSS AJOUTER DIRECTMENT DANS PASSER PAR DIFFUSION SASS NI SES COMPILATION*/
@@ -334,7 +359,23 @@ main {
       object-fit: cover;
     }
   }
-  
+}
+
+.load_more_button{
+  width: 272px;
+  height: 50px;
+  background-color: #D8D8D8;
+  border-radius: 2px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #000000;
+  font-family: 'SpaceMono-Regular', monospace;
+  font-weight: 400;
+  font-size: 12px;
+  margin-top:50px;
+  cursor: pointer;
 }
 
 /*CSS POUR INFO PHOTO AU SURVOL*/
@@ -462,6 +503,9 @@ body.no-scroll {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
+  display: none;
+  justify-content: center;
+  align-items: center;
 
   border: solid 5px #000000;
 }
@@ -480,8 +524,7 @@ body.no-scroll {
   align-items: center;
   overflow: hidden;
 
-  form{
-    width : 300px;
+  .wpcf7-form{
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     font-size: 12px;
@@ -489,20 +532,21 @@ body.no-scroll {
     display: flex;
     flex-direction: column;
     justify-content: start;
-    align-items: center;
-    gap: 20px;
     padding-bottom:30px;
 
-    article{
+    /*p{
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 10px;
+    }*/
+    span{
+      width: 263px;
+      display: block;
     }
     label{
       align-self: flex-start;
       text-transform: uppercase;
-
     }
   }
 }
@@ -511,14 +555,16 @@ input{
   width: 100%;
   border: solid 1px #B8BBC2;
   border-radius: 8px;
-  padding-left: 10px;
-
+  /*padding-left: 10px;*/
 }
-input.messageLong{
+textarea{
+  width: 100%;
+  border: solid 1px #B8BBC2;
+  border-radius: 8px;
   height: 210px;
   text-align: left;
 }
-.submit-button{
+.wpcf7-submit{
   width: 100%;
   height: 50px;
   background-color: #D8D8D8;
@@ -550,4 +596,12 @@ input.messageLong{
       display: block;
       margin-left: 50px; 
     }
+}
+.wpcf7{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
 }

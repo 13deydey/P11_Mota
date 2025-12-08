@@ -3,9 +3,10 @@ get_header();
 ?>
 
 	<main id="primary" class="site-main">
-	<p>CECI EST UN TEST DU FONCTIONNEMENT DE MON LIEN PHP qui ne fonctionne pas</p>
+<!--	À SUPPRIMER PLUS TARD SAUF SI PAGE.PHP DOIT EXISTER
+		<p>CECI EST UN TEST DU FONCTIONNEMENT DE MON LIEN PHP qui ne fonctionne pas</p>
 		<?php
-		while ( have_posts() ) :
+	/*	while ( have_posts() ) :
 			the_post();
 
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -35,7 +36,7 @@ get_header();
 							sprintf(
 								wp_kses(
 									/* translators: %s: Name of current post. Only visible to screen readers */
-									__( 'Edit <span class="screen-reader-text">%s</span>', 'motaphoto' ),
+			/*						__( 'Edit <span class="screen-reader-text">%s</span>', 'motaphoto' ),
 									array(
 										'span' => array(
 											'class' => array(),
